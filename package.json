@@ -24,7 +24,11 @@
     "html",
     "email"
   ],
-  "author": "Shiv Kumar",
+  "author": {
+    "name": "Shiv Kumar",
+    "email": "developer.shiv2020@gmail.com",
+    "url": "https://shivkumar.me/"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/shiv-source/node-multi-mailer/issues"
