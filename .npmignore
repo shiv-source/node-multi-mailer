@@ -1,0 +1,6 @@
+example
+.github
+.npmignore
+.vscode/
+test/
+test
