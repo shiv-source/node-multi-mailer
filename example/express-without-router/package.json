@@ -1,0 +1,23 @@
+{
+  "name": "node-multi-mailer-example-without-router",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "keywords": [
+    "multiMailer",
+    "node-multi-mailer"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "node-multi-mailer": "^1.0.0",
+    "passport": "^0.4.1"
+  },
+  "devDependencies": {}
+}
