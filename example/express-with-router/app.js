@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 multiMailer.configuration({
     senderEmail : "no-reply@webizysolutions.com",
     senderName : "Webizy IT Solutions",
-    sendGridApiKay : "PASTE_YOUR_SENDGRID_API_KEY",
+    sendGridApiKey : "PASTE_YOUR_SENDGRID_API_KEY",
     replyTo : "support@webizysolutions.com"   /// else default will be no-reply@webizysolutions.com
 });
 

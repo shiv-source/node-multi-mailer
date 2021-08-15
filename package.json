@@ -1,7 +1,7 @@
 {
   "name": "node-multi-mailer",
-  "version": "1.1.1",
-  "description": "A high level email sender ",
+  "version": "1.1.2",
+  "description": "A simple node.js module which expose high level API of Nodemailer and SendGrid.",
   "main": "lib/index.js",
   "directories": {
     "lib": "lib"
@@ -14,6 +14,8 @@
     "url": "git+https://github.com/shiv-source/node-multi-mailer.git"
   },
   "keywords": [
+    "node-multi-mailer",
+    "multiMailer",
     "email",
     "sendgrid",
     "nodemailer",
