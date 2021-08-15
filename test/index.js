@@ -58,4 +58,13 @@ describe('node-multi-mailer' , async () => {
         catch(err) { throw err};
     });
     
+    it('sendEjsTemplateWithData should be a function', async () => {
+
+        try {
+            expect(multiMailer.sendEjsTemplateWithData).to.be.a('function');
+
+        }
+        catch(err) { throw err};
+    });
+    
 });
