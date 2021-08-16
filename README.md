@@ -1,16 +1,18 @@
 # node-multi-mailer
 
+![NPM Version](https://img.shields.io/npm/v/node-multi-mailer.svg?style=flat)
+![NPM Downloads](https://img.shields.io/npm/dm/node-multi-mailer.svg)
 ![GitHub release](https://img.shields.io/github/release/shiv-source/node-multi-mailer)
-[![License](https://img.shields.io/github/license/shiv-source/node-multi-mailer)](https://opensource.org/licenses/MIT)
+![License](https://img.shields.io/github/license/shiv-source/node-multi-mailer)
 
-A simple node.js module which expose high level API of [Nodemailer](https://www.npmjs.com/package/nodemailer) and [SendGrid](https://www.npmjs.com/package/@sendgrid/mail) .
+A simple node.js module that exposes high-level API of [Nodemailer](https://www.npmjs.com/package/nodemailer) and [SendGrid](https://www.npmjs.com/package/@sendgrid/mail).
 
 # Installation
 
 ## Prerequisites
 
 - Node.js >= 10.0.0
-- A [Twilio SendGrid account](https://sendgrid.com/free?source=sendgrid-nodejs) for sending emails
+- A [Twilio SendGrid account](https://sendgrid.com/free?source=sendgrid-nodejs) for sending emails.
 
 ## Obtain an API key from SendGrid
 
@@ -36,11 +38,45 @@ npm install --save node-multi-mailer
 
 ## Verify Sender Identity
 
-Verify an email address or domain in the [Sender Authentication tab](https://app.sendgrid.com/settings/sender_auth/senders). Without this you will receive a `403 Forbidden` response when trying to send mail.
+Verify an email address or domain in the [Sender Authentication tab](https://app.sendgrid.com/settings/sender_auth/senders). Without this, you will receive a `403 Forbidden` response when trying to send mail.
 
-# Implementation with NodeJs
+# Examples
 
-## A normal plain text email
+Add an `email` folder in your project root directory and create a `login.ejs` file in the `email` folder. You can use any template name you want.
+
+```
+Folder structure with mail template:
+
+    +-- email
+    |   +-- login.ejs
+    +-- node_modules
+    +-- index.js
+    +-- package.json
+```
+
+If required, use this `login.ejs` file as an example template.
+
+```html
+<!-- login.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Node-Multi-Mailer</title>
+  </head>
+
+  <body>
+    <h1>Hey <%= firstName %> <%= lastName %>, Your OTP is <%= otp %></h1>
+  </body>
+</html>
+```
+
+## Implementation with NodeJs
+
+### A normal plain text email
 
 ```js
 // index.js
@@ -65,37 +101,7 @@ multiMailer.sendTextEmail(
 );
 ```
 
-## A template email using EJS
-
-Add a `email` folder in your project root directory and create a `login.ejs` file in the `email` folder. You can use any template name you want.
-
-```
-Folder structure:
-
-    +-- email
-    |   +-- login.ejs
-    +-- node_modules
-    +-- index.js
-    +-- package.json
-```
-
-```html
-<!-- login.ejs -->
-
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Node-Multi-Mailer</title>
-  </head>
-
-  <body>
-    <h1>Hey <%= firstName %> <%= lastName %>, Your OTP is <%= otp %></h1>
-  </body>
-</html>
-```
+### A template email using EJS
 
 ```js
 // index.js
@@ -103,15 +109,16 @@ Folder structure:
 var multiMailer = require("node-multi-mailer");
 var path = require("path");
 
+var emailFolder = path.join(__dirname, "email"); // path to email folder
+
 // Create a new instance of MultiMailer
 multiMailer.configuration({
   senderEmail: "test@example.com",
   senderName: SENDER_NAME, // Business Name
   sendGridApiKey: SENDGRID_API_KEY, // SendGrid API Key
   replyTo: "test@example.com",
+  templateFolderPath: emailFolder,
 });
-
-var emailFolder = path.join(__dirname, "email"); // path to email folder
 
 var RECEIVER_EMAIL = "developer.shiv2020@gmail.com";
 
@@ -130,39 +137,9 @@ multiMailer.sendEjsTemplateWithData(
 );
 ```
 
-# Implementation with ExpressJs
+## Implementation with ExpressJs
 
-## A template email using EJS
-
-Add a `email` folder in your project root directory and create a `login.ejs` file in the `email` folder. You can use any template name you want.
-
-```
-Folder structure:
-
-    +-- email
-    |   +-- login.ejs
-    +-- node_modules
-    +-- index.js
-    +-- package.json
-```
-
-```html
-<!-- login.ejs -->
-
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Node-Multi-Mailer</title>
-  </head>
-
-  <body>
-    <h1>Hey <%= firstName %> <%= lastName %>, Your OTP is <%= otp %></h1>
-  </body>
-</html>
-```
+### A template email using EJS
 
 ```js
 // index.js
@@ -171,15 +148,16 @@ var express = require("express");
 var multiMailer = require("node-multi-mailer");
 var path = require("path");
 
+var emailFolder = path.join(__dirname, "email"); // path to email folder
+
 // Create a new instance of MultiMailer
 multiMailer.configuration({
   senderEmail: "test@example.com",
   senderName: SENDER_NAME, // Business Name
   sendGridApiKey: SENDGRID_API_KEY, // SendGrid API Key
   replyTo: "test@example.com",
+  templateFolderPath: emailFolder,
 });
-
-var emailFolder = path.join(__dirname, "email"); // path to email folder
 
 var app = express();
 
@@ -209,7 +187,12 @@ app.get("/", async (req, res) => {
 # Contributors
 
 <a href = "https://github.com/shiv-source">
-  <img src = "https://contrib.rocks/image?repo=shiv-source/node-multi-mailer"/>
+  <img 
+    src = "https://avatars.githubusercontent.com/u/56552766?v=4" 
+    width="100" 
+    height="100"
+    style="border-radius: 50%; margin: 5px;" 
+  />
 </a>
 
 # License
