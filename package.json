@@ -38,7 +38,8 @@
   "homepage": "https://github.com/shiv-source/node-multi-mailer#readme",
   "dependencies": {
     "@sendgrid/mail": "^7.4.6",
-    "ejs": "^3.1.6"
+    "ejs": "^3.1.6",
+    "nodemailer": "^6.6.3"
   },
   "engines": {
     "node": ">=10"
