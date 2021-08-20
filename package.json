@@ -1,6 +1,6 @@
 {
   "name": "node-multi-mailer",
-  "version": "1.1.2",
+  "version": "2.0.0",
   "description": "A simple node.js module which expose high level API of Nodemailer and SendGrid.",
   "main": "lib/index.js",
   "directories": {
@@ -38,8 +38,7 @@
   "homepage": "https://github.com/shiv-source/node-multi-mailer#readme",
   "dependencies": {
     "@sendgrid/mail": "^7.4.6",
-    "ejs": "^3.1.6",
-    "nodemailer": "^6.6.3"
+    "ejs": "^3.1.6"
   },
   "engines": {
     "node": ">=10"
