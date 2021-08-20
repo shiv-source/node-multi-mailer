@@ -14,41 +14,41 @@ A simple node.js module that exposes high-level API of [Nodemailer](https://www.
 - Node.js >= 10.0.0
 - A [Twilio SendGrid account](https://sendgrid.com/free?source=sendgrid-nodejs) for sending emails.
 
-## Obtain an API key from SendGrid
-
-Grab your API key from the [Twilio SendGrid UI](https://app.sendgrid.com/settings/api_keys).
-
-## Set up your environment variables
-
-Do not hardcode your [Twilio SendGrid API Key](https://app.sendgrid.com/settings/api_keys) into your code. Instead, use an environment variable or some other secure means of protecting your Twilio SendGrid API Key. Following is an example of using an environment variable.
-
-```bash
-echo "export SENDGRID_API_KEY='YOUR_API_KEY'" > sendgrid.env
-echo "sendgrid.env" >> .gitignore
-source ./sendgrid.env
-```
-
 ## Install Package
 
 The following recommended installation requires [npm](https://npmjs.org/). If you are unfamiliar with npm, see the [npm docs](https://npmjs.org/doc/). Npm comes installed with Node.js since node version 0.8.x, therefore, you likely already have it.
 
 ```sh
+
+# With NPM
+
 npm install --save node-multi-mailer
+
+# With Yarn
+
+yarn add node-multi-mailer
+
 ```
 
-## Verify Sender Identity
+### Verify Sender Identity from SendGrid
 
 Verify an email address or domain in the [Sender Authentication tab](https://app.sendgrid.com/settings/sender_auth/senders). Without this, you will receive a `403 Forbidden` response when trying to send mail.
 
 # Examples
 
-Add an `email` folder in your project root directory and create a `login.ejs` file in the `email` folder. You can use any template name you want.
+If you want to use an email template, then add an `email` folder in your project root directory and create a `login.ejs` file in the `email` folder. You can use any template name you want.
+
+Add `attachment` folder in your root directory for sending an email with attachments.
 
 ```
 Folder structure with mail template:
 
     +-- email
     |   +-- login.ejs
+    +-- attachments
+    |   +-- myImage.png
+    |   +-- resume.pdf
+    |   +-- resume.docx
     +-- node_modules
     +-- index.js
     +-- package.json
@@ -74,9 +74,24 @@ If required, use this `login.ejs` file as an example template.
 </html>
 ```
 
-## Implementation with NodeJs
+## Implementation with NodeJs and SendGrid
 
-### A normal plain text email
+```js
+// Available options inside configuration object
+
+const multiMailer = require("node-multi-mailer");
+
+const multiMailer = multiMailer.configuration({
+  senderEmail: "you@example.com",
+  senderName: "your business name", // Business Name
+  sendGridApiKey: SENDGRID_API_KEY, // SendGrid API Key
+  replyTo: "me@example.com", // optional parameter [ default = senderEmail ]
+  templateFolderPath: emailFolder, // optional parameter  [ required for sending templates ]
+  attachmentFolderPath: attachmentFolder, // Optional parameter  [ required for sending attachments]
+});
+```
+
+### A normal plain text email without any attachments
 
 ```js
 // index.js
@@ -85,23 +100,57 @@ var multiMailer = require("node-multi-mailer");
 
 // Create a new instance of MultiMailer
 multiMailer.configuration({
-  senderEmail: "test@example.com",
-  senderName: SENDER_NAME, // Business Name
+  senderEmail: "you@example.com",
+  senderName: "your business name", // Business Name
   sendGridApiKey: SENDGRID_API_KEY, // SendGrid API Key
-  replyTo: "test@example.com",
+  replyTo: "me@example.com", // optional parameter [ default = senderEmail ]
 });
 
 var RECEIVER_EMAIL = "developer.shiv2020@gmail.com";
 
 // To send a plain text email
-multiMailer.sendTextEmail(
+multiMailer.SendGrid.sendTextEmail(
   RECEIVER_EMAIL,
   "Sending email from node-multi-mailer", // subject
   "Thanks for sending email with node-multi-mailer" // body
 );
 ```
 
-### A template email using EJS
+### A normal plain text email with attachments
+
+```js
+
+// index.js
+
+var multiMailer = require("node-multi-mailer");
+var path = require("path");
+
+var attachmentFolder = path.join(__dirname, "attachment"); // attachment folder path
+
+let attachments = ["myImage.png", "resume.pdf", "resume.docx"]; // pass list of files you want to send with multiMailer
+
+// Create a new instance of MultiMailer
+multiMailer.configuration({
+  senderEmail: "you@example.com",
+  senderName: "your business name", // Business Name
+  sendGridApiKey: SENDGRID_API_KEY, // SendGrid API Key
+  replyTo: "me@example.com", // optional parameter [ default = senderEmail ]
+  templateFolderPath: emailFolder, // optional parameter  [ required for sending templates ]
+  attachmentFolderPath: attachmentFolder, // Optional parameter  [ required for sending attachments]
+});
+
+var RECEIVER_EMAIL = "developer.shiv2020@gmail.com";
+
+// To send a plain text email
+multiMailer.SendGrid.sendTextEmail(
+  RECEIVER_EMAIL,
+  "Sending email from node-multi-mailer", // subject
+  "Thanks for sending email with node-multi-mailer" // body
+  attachments,
+);
+```
+
+### A template email using EJS without attachments
 
 ```js
 // index.js
@@ -109,7 +158,7 @@ multiMailer.sendTextEmail(
 var multiMailer = require("node-multi-mailer");
 var path = require("path");
 
-var emailFolder = path.join(__dirname, "email"); // path to email folder
+var emailFolder = path.join(__dirname, "email"); // template folder path
 
 // Create a new instance of MultiMailer
 multiMailer.configuration({
@@ -129,7 +178,7 @@ var data = {
 };
 
 // To send a template email
-multiMailer.sendEjsTemplateWithData(
+multiMailer.SendGrid.sendEjsTemplateWithData(
   RECEIVER_EMAIL,
   "Sending email from node-multi-mailer", // subject
   "login.ejs", // template name
@@ -137,18 +186,19 @@ multiMailer.sendEjsTemplateWithData(
 );
 ```
 
-## Implementation with ExpressJs
-
-### A template email using EJS
+### A template email using EJS with attachments
 
 ```js
 // index.js
 
-var express = require("express");
 var multiMailer = require("node-multi-mailer");
 var path = require("path");
 
-var emailFolder = path.join(__dirname, "email"); // path to email folder
+var attachmentFolder = path.join(__dirname, "attachment"); // attachment folder path
+
+var emailFolder = path.join(__dirname, "email"); // template folder path
+
+let attachments = ["myImage.png", "resume.pdf", "resume.docx"]; // pass list of files you want to send with multiMailer
 
 // Create a new instance of MultiMailer
 multiMailer.configuration({
@@ -157,11 +207,58 @@ multiMailer.configuration({
   sendGridApiKey: SENDGRID_API_KEY, // SendGrid API Key
   replyTo: "test@example.com",
   templateFolderPath: emailFolder,
+  attachmentFolderPath: attachmentFolder,
+});
+
+var RECEIVER_EMAIL = "developer.shiv2020@gmail.com";
+
+var data = {
+  fisrtName: "Shiv",
+  lastName: "Kumar",
+  otp: "123456",
+};
+
+// To send a template email
+multiMailer.SendGrid.sendEjsTemplateWithData(
+  RECEIVER_EMAIL,
+  "Sending email from node-multi-mailer", // subject
+  "login.ejs", // template name
+  data // template data
+  attachments,
+);
+```
+
+## Implementation with ExpressJs
+
+### A template email using EJS without attachments
+
+```js
+// index.js
+
+var express = require("express");
+var multiMailer = require("node-multi-mailer");
+var path = require("path");
+
+var attachmentFolder = path.join(__dirname, "attachment"); // attachment folder path
+
+var emailFolder = path.join(__dirname, "email"); // template folder path
+
+let attachments = ["myImage.png", "resume.pdf", "resume.docx"]; // pass list of files you want to send with multiMailer
+
+// Create a new instance of MultiMailer
+multiMailer.configuration({
+  senderEmail: "test@example.com",
+  senderName: SENDER_NAME, // Business Name
+  sendGridApiKey: SENDGRID_API_KEY, // SendGrid API Key
+  replyTo: "test@example.com",
+  templateFolderPath: emailFolder,
+  attachmentFolderPath: attachmentFolder,
 });
 
 var app = express();
 
 app.get("/", async (req, res) => {
+
   var RECEIVER_EMAIL = "developer.shiv2020@gmail.com";
 
   var data = {
@@ -171,16 +268,15 @@ app.get("/", async (req, res) => {
   };
 
   // To send a template email
-  await multiMailer.sendEjsTemplateWithData(
+  await multiMailer.SendGrid.sendEjsTemplateWithData(
     RECEIVER_EMAIL,
     "Sending email from node-multi-mailer", // subject
     "login.ejs", // template name
     data // template data
+    attachments,
   );
 
-  return res.send(
-    "Email sent to your template with the value bind with 'data' object"
-  );
+  return res.send("Email sent");
 });
 ```
 
